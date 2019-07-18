@@ -1,0 +1,53 @@
+<div class="mainDiv">
+  <header class="header">
+    <h1>User Post and Comments</h1>
+  </header>
+  <div class="sub_div">
+    <div class="userListDiv">
+      <h2>Please select user to find their post:</h2>
+      <button class="btn btn-primary" *ngFor="let user of userList" (click)="getUserPost(user)"
+        [ngClass]="{'selected':user==selectedUser}">{{user.name
+          | firstname}}
+      </button>
+    </div>
+    <app-loading *ngIf="loading"></app-loading>
+    <div class="postDiv" *ngIf="showUserPost">
+      <h2>Posts from {{selectedUser.name}}</h2>
+      <!--  | slice:0:show -->
+      <div *ngFor="let post of userPostList;let i=index">
+        <div *ngIf="i < show">
+          <button type="button" class="btn btn-primary pull-right" (click)="isCollapsed[i] = !isCollapsed[i]"
+            [attr.aria-expanded]="!isCollapsed[i]" [attr.aria-controls]="'collapseViewMore-' + index"
+            (click)="getuserComments(post)">View
+            comments</button>
+          <div class="postItem">
+            <h4>{{ post.title}}</h4>
+            <h5>{{ post.body }}</h5>
+            <div *ngIf="commentList?.length!=0" [id]="'collapseViewMore-' + i" [collapse]="!isCollapsed[i]"
+              class="card card-block card-header">
+              <ng-container *ngIf="commentList?.length!=0">
+                <h4>{{counter}}&nbsp;Comments</h4>
+                <div *ngFor="let comment of commentList">
+                  <div class="comments-list" *ngIf="comment.postId == selectedPost.id">
+                    <div class="media">
+                      <div class="media-body">
+                        {{comment.body}}
+                        Wow! this is really great.
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <p *ngIf="comment.postId == selectedPost.id" class="well">{{comment.body}}</p> -->
+                </div>
+              </ng-container>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <button (click)="increaseShow()" class="btn btn-primary pull-right" [disabled]="show >=postList.length">...Load
+        more</button>
+    </div>
+  </div>
+</div>
