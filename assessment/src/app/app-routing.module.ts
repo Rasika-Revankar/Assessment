@@ -4,7 +4,15 @@ import { DetailsComponent } from './details/details.component';
 
 
 const routes: Routes = [
-  { path: 'user', component: DetailsComponent }
+  {
+    path: 'users',
+    component: DetailsComponent
+  },
+  {
+    path: '',
+    redirectTo: '/users',
+    pathMatch: 'full'
+  }
 ];
 
 @NgModule({

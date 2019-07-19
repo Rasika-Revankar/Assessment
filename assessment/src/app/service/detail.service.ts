@@ -1,22 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
-import { HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { HttpClient } from "@angular/common/http";
-import { map, catchError, tap } from "rxjs/operators";
+import { HttpClient } from '@angular/common/http';
+import { catchError, tap } from 'rxjs/operators';
 
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json',
-  })
-};
 @Injectable({
   providedIn: 'root'
 })
 
 export class DetailService {
   constructor(private httpClient: HttpClient) { }
-  host = "https://jsonplaceholder.typicode.com"
+  hostUrl = 'https://jsonplaceholder.typicode.com';
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -30,19 +24,19 @@ export class DetailService {
   }
 
   getusers(): Observable<any> {
-    return this.httpClient.get<any>(this.host + '/users')
+    return this.httpClient.get<any>(`${this.hostUrl}/users`)
       .pipe(tap(),
         catchError(this.handleError)
       );
   }
-  getPost(): Observable<any> {
-    return this.httpClient.get<any>(this.host + '/posts')
+  usersPostData(): Observable<any> {
+    return this.httpClient.get<any>(`${this.hostUrl}/posts`)
       .pipe(tap(),
         catchError(this.handleError)
       );
   }
   getComments(): Observable<any> {
-    return this.httpClient.get<any>(this.host + '/comments')
+    return this.httpClient.get<any>(`${this.hostUrl}/comments`)
       .pipe(tap(),
         catchError(this.handleError)
       );

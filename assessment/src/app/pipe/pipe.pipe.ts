@@ -4,13 +4,8 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'firstname'
 })
 export class PipePipe implements PipeTransform {
-  transform(value: string, args: any[]): string {
- 
-    if (!value) { return ''; }
-    if (value.includes('Mrs. ')) {
-      return value.split(' ')[1]
-    }
-    return value.split(' ')[0];
-  }
+  transform(value: string): string {
 
+    return value.includes('Mrs. ' || 'Mrs.' || 'Mr.' || 'Mr. ') ? value.split(' ')[1] : value.split(' ')[0];
+  }
 }

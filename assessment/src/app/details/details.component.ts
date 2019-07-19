@@ -1,76 +1,92 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DetailService } from '../service/detail.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css']
 })
-export class DetailsComponent implements OnInit {
+export class DetailsComponent implements OnInit, OnDestroy {
 
   constructor(private service: DetailService) { }
+
   userList = [];
   selectedUser: any;
   postList = [];
-  commentList = []
-  showUserPost: boolean = false;
-  showComments: boolean = false;
+  comments = [];
+  showUserPost = false;
+  showComments = false;
   public isCollapsed = {};
   show: number;
-  loading: boolean = false
+  loading = false;
+  counter: number;
+  selectedPost: any;
+  subscribeUsers: Subscription;
+  subscribeUserPosts: Subscription;
+  subscribeUserComment: Subscription;
+  userPostList = [];
+
+  commentList = [];
+
   ngOnInit() {
-    this.loading = true;
-    this.service.getusers().subscribe((data) => {
-      // console.log(data)
-      this.userList = data;
-      this.loading = false;
-    })
+    this.FetchUserList();
     this.counter = 0;
-    this.show = 3
+    this.show = 3;
 
   }
-  userPostList = []
-  getUserPost(user) {
+
+  FetchUserList() {
+    this.loading = true;
+    this.subscribeUsers = this.service.getusers().subscribe((data) => {
+      this.userList = data;
+      this.loading = false;
+    }, (err) => {
+      alert(err);
+    });
+  }
+
+
+  UsersPost(user) {
+
     this.loading = true;
     this.showUserPost = false;
-    this.userPostList = []
+    this.userPostList = [];
     this.selectedUser = user;
-    this.service.getPost().subscribe((data) => {
-      this.postList = data
+    this.subscribeUserPosts = this.service.usersPostData().subscribe((data) => {
+      this.postList = data;
       this.showUserPost = true;
       this.loading = false;
       this.postList.forEach(element => {
-        if (element.userId == this.selectedUser.id) {
-          this.userPostList.push(element)
+        if (element.userId === this.selectedUser.id) {
+          this.userPostList.push(element);
         }
       });
-
+    }, (err) => {
+      alert(err);
     });
 
   }
-  content = [];
-  counter: number;
-
-
-  selectedPost: any
-  getuserComments(post) {
+  UserComments(post) {
     this.selectedPost = post;
     this.counter = 0;
-    this.service.getComments().subscribe((data) => {
-      this.showUserPost = true;
-      this.commentList = data
-      this.commentList.forEach(element => {
-        if (element.postId == this.selectedPost.id) {
-          this.counter += 1;
-        }
-      });
-
-    })
-
-
+    this.subscribeUserComment = this.service.getComments().subscribe((data) => {
+      this.comments = data;
+      this.commentList = this.comments.filter(comment =>
+        comment.postId === this.selectedPost.id
+      );
+    }, (err) => {
+      alert(err);
+    });
   }
+
   increaseShow() {
-    // this.show += 10;
     this.show = this.userPostList.length;
+  }
+
+  OnDestroy() {
+    this.subscribeUsers.unsubscribe();
+    this.subscribeUserPosts.unsubscribe();
+    this.subscribeUserComment.unsubscribe();
   }
 }
