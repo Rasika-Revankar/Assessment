@@ -29,14 +29,14 @@ export class DetailService {
         catchError(this.handleError)
       );
   }
-  usersPostData(): Observable<any> {
-    return this.httpClient.get<any>(`${this.hostUrl}/posts`)
+  usersPostData(userId: number): Observable<any> {
+    return this.httpClient.get<any>(`${this.hostUrl}/posts?userId=${userId}`)
       .pipe(tap(),
         catchError(this.handleError)
       );
   }
-  getComments(): Observable<any> {
-    return this.httpClient.get<any>(`${this.hostUrl}/comments`)
+  getComments(postId: number): Observable<any> {
+    return this.httpClient.get<any>(`${this.hostUrl}/comments?postId=${postId}`)
       .pipe(tap(),
         catchError(this.handleError)
       );

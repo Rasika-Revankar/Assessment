@@ -20,18 +20,14 @@ export class DetailsComponent implements OnInit, OnDestroy {
   public isCollapsed = {};
   show: number;
   loading = false;
-  counter: number;
   selectedPost: any;
   subscribeUsers: Subscription;
   subscribeUserPosts: Subscription;
   subscribeUserComment: Subscription;
-  userPostList = [];
-
   commentList = [];
 
   ngOnInit() {
     this.FetchUserList();
-    this.counter = 0;
     this.show = 3;
 
   }
@@ -43,48 +39,40 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.loading = false;
     }, (err) => {
       alert(err);
+      this.loading = false;
     });
   }
-
 
   UsersPost(user) {
 
     this.loading = true;
     this.showUserPost = false;
-    this.userPostList = [];
     this.selectedUser = user;
-    this.subscribeUserPosts = this.service.usersPostData().subscribe((data) => {
+    this.subscribeUserPosts = this.service.usersPostData(user.id).subscribe((data) => {
       this.postList = data;
       this.showUserPost = true;
       this.loading = false;
-      this.postList.forEach(element => {
-        if (element.userId === this.selectedUser.id) {
-          this.userPostList.push(element);
-        }
-      });
     }, (err) => {
       alert(err);
+      this.loading = false;
     });
 
   }
-  UserComments(post) {
-    this.selectedPost = post;
-    this.counter = 0;
-    this.subscribeUserComment = this.service.getComments().subscribe((data) => {
-      this.comments = data;
-      this.commentList = this.comments.filter(comment =>
-        comment.postId === this.selectedPost.id
-      );
+  UserComments(userPost) {
+    console.log(userPost);
+    this.selectedPost = userPost;
+    this.subscribeUserComment = this.service.getComments(userPost.id).subscribe((data) => {
+      this.commentList = data;
     }, (err) => {
       alert(err);
     });
   }
 
   increaseShow() {
-    this.show = this.userPostList.length;
+    this.show = this.postList.length;
   }
 
-  OnDestroy() {
+  ngOnDestroy() {
     this.subscribeUsers.unsubscribe();
     this.subscribeUserPosts.unsubscribe();
     this.subscribeUserComment.unsubscribe();

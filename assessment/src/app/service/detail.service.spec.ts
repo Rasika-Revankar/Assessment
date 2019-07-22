@@ -35,7 +35,7 @@ describe('DetailService', () => {
       body: 'Hello world',
       title: 'Testing angular 2'
     }];
-    service.usersPostData().subscribe(posts => {
+    service.usersPostData(1).subscribe(posts => {
       expect(posts.length).toBe(2);
       exports(posts).toEqual(dummyPosts);
     });
